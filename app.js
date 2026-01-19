@@ -45,6 +45,7 @@
 
   const $unit = document.getElementById("unitSelect");
   const $startLv = document.getElementById("startLvField");
+  const $startFail = document.getElementById("startFailField");
   const $applyStart = document.getElementById("applyStartLvBtn");
 
   const $lv = document.getElementById("lvField");
@@ -251,12 +252,23 @@
 
     const vRaw = Number(String($startLv.value).trim());
     const v = clampInt(vRaw, 0, 20);
-
-    // input 값을 정규화(예: 999 입력해도 20으로)
     $startLv.value = String(v);
 
+    const fRaw = Number(String($startFail.value).trim());
+    const f = Number.isFinite(fRaw) ? Math.max(0, Math.trunc(fRaw)) : 0;
+    $startFail.value = String(f);
+
+    // 상태 초기화 후, 현재 LV만 시작값으로 세팅
     clearAllStateExceptLv(v);
-    log(`시작 LV 적용: ${v}`);
+
+    // ✅ 핵심: "현재 레벨(v)"에 대한 실패누적/보정 적용
+    // 실패횟수는 무한 누적로 저장, 보정은 최대 +5까지만 반영
+    if (v < 20) {
+      failCount[v] = f;
+      failBonus[v] = Math.min(5, f);
+    }
+
+    log(`시작 LV 적용: ${v} / 시작 실패횟수: ${f} (보정 +${Math.min(5, f)}%)`);
     render();
   }
 

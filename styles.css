@@ -76,6 +76,14 @@ button:disabled {
   display: flex;
   gap: 10px;
 }
+
+#startFailField{
+  flex: 0 0 140px;
+}
+
+#applyStartLvBtn{
+  flex: 0 0 110px;
+}
 #applyStartLvBtn{
   flex: 0 0 110px;
 }
