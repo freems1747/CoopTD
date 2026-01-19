@@ -350,41 +350,40 @@
     const t2 = prompt("반복 횟수를 입력하세요 (1~1000)");
     if (t2 === null) return;
 
-    const t2s = String(t2).trim();
-    if (t2s === "" || !Number.isInteger(Number(t2s))) {
+    const loops = clampInt(Number(t2), 1, 1000);
+    if (!Number.isInteger(Number(t2))) {
       alert("반복 횟수는 정수로 입력하세요.");
       return;
     }
-    const loops = clampInt(Number(t2s), 1, 1000);
 
-    // 현재 “실제 상태”를 시작점으로 복제해서 시뮬 시작
     const initFailCount = { ...failCount };
     const initFailBonus = { ...failBonus };
 
     let sumStones = 0;
     let sumTries = 0;
-    let sumSucc = 0;
-    let sumFail = 0;
+
+    let minTries = Infinity;
+    let maxTries = 0;
 
     for (let i = 0; i < loops; i++) {
       const r = simulateOnce(currentLv, targetLv, initFailCount, initFailBonus);
       sumStones += r.stones;
       sumTries += r.tries;
-      sumSucc += r.succ;
-      sumFail += r.fail;
+
+      minTries = Math.min(minTries, r.tries);
+      maxTries = Math.max(maxTries, r.tries);
     }
 
     const avgStones = sumStones / loops;
     const avgTries = sumTries / loops;
 
-    // 로그는 최종 결과 한 줄만 남김
     clearLog();
-    log(`사용된 해방석 평균 : ${avgStones.toFixed(1)}개 (평균 시도 ${avgTries.toFixed(1)}회)`);
+    log(`사용된 해방석 평균 : ${avgStones.toFixed(1)}개 (평균 시도 ${avgTries.toFixed(1)}회 / 최소 ${minTries} / 최대 ${maxTries})`);
     log(`LV${currentLv}에서 목표LV${targetLv}까지 ${loops}회 시뮬레이션 결과:`, "success");
 
-    // UI 상태(현재LV/누적재화/통계)는 그대로 두고, 로그만 결과로 정리
-    // 필요하면 여기서 통계 영역도 "시뮬 통계"로 바꾸는 옵션도 가능
+    render();
   }
+
   // 이벤트
   $btn.addEventListener("click", enhanceOnce);
   $auto.addEventListener("click", startOrStopAutoEnhance);
