@@ -399,4 +399,5 @@
   });
 
   render();
+  $helpPanel.classList.toggle("open");
 })();
