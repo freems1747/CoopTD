@@ -14,7 +14,7 @@
 ## 🚀 바로 실행하기
 
 👉 **플레이 링크**  
-https://<깃헙아이디>.github.io/<레포이름>/
+https://freems1747.github.io/CoopTD/
 
 > GitHub Pages 기반으로 동작합니다.  
 > 새로고침해도 서버 요청 없이 즉시 실행됩니다.
