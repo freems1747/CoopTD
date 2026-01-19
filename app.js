@@ -44,13 +44,18 @@
   let autoTargetLv = null;
 
   const $unit = document.getElementById("unitSelect");
+  const $startLv = document.getElementById("startLvField");
+  const $applyStart = document.getElementById("applyStartLvBtn");
+
   const $lv = document.getElementById("lvField");
   const $stones = document.getElementById("stoneField");
   const $chance = document.getElementById("chanceField");
   const $fails = document.getElementById("failField");
+
   const $btn = document.getElementById("enhanceBtn");
   const $auto = document.getElementById("autoEnhanceBtn");
   const $reset = document.getElementById("resetBtn");
+
   const $log = document.getElementById("logBox");
   const $info = document.getElementById("chanceInfo");
   const $attemptList = document.getElementById("attemptList");
@@ -60,11 +65,17 @@
   const $sumFail = document.getElementById("sumFail");
 
   // 콤보 초기화
-  units.forEach((u) => {
+  units.forEach(u => {
     const o = document.createElement("option");
     o.textContent = u;
     $unit.appendChild(o);
   });
+
+  function clampInt(n, min, max) {
+    if (!Number.isFinite(n)) return min;
+    n = Math.trunc(n);
+    return Math.min(max, Math.max(min, n));
+  }
 
   function getFailCount(lv) {
     return failCount[lv] || 0;
@@ -75,6 +86,7 @@
   }
 
   function getChance(lv) {
+    if (lv >= 20) return 0;
     return Math.min(100, rules[lv].baseChance + getBonus(lv));
   }
 
@@ -118,6 +130,10 @@
     renderAttempts();
     renderSummary();
 
+    // 자동강화 중이면 시작LV 적용 막기
+    $startLv.disabled = (autoTimerId !== null);
+    $applyStart.disabled = (autoTimerId !== null);
+
     if (currentLv >= 20) {
       $chance.value = "MAX";
       $btn.disabled = true;
@@ -132,7 +148,8 @@
     const chance = getChance(currentLv);
 
     $chance.value = chance + "%";
-    $info.textContent = `${currentLv} → ${currentLv + 1} | 기본 ${r.baseChance}% + 보정 ${getBonus(currentLv)}% = ${chance}% | 소모 ${r.cost}`;
+    $info.textContent =
+      `${currentLv} → ${currentLv + 1} | 기본 ${r.baseChance}% + 보정 ${getBonus(currentLv)}% = ${chance}% | 소모 ${r.cost}`;
 
     // 자동강화 중: 수동강화 막고, 자동 버튼은 "중지"
     if (autoTimerId !== null) {
@@ -151,7 +168,6 @@
   function enhanceOnce() {
     if (currentLv >= 20) return;
 
-    // 구간별 시도 & 총 시도 증가
     attempts[currentLv] = (attempts[currentLv] || 0) + 1;
     totalAttempts++;
 
@@ -177,7 +193,6 @@
   }
 
   function startOrStopAutoEnhance() {
-    // 자동강화 중이면 중지
     if (autoTimerId !== null) {
       stopAuto("자동강화 중지");
       return;
@@ -188,13 +203,9 @@
     const input = prompt(`목표 강화 수치를 입력하세요 (현재 ${currentLv}, 0~20)`);
     if (input === null) return;
 
-    const target = Number(String(input).trim());
-    if (!Number.isFinite(target) || !Number.isInteger(target)) {
+    const target = clampInt(Number(String(input).trim()), 0, 20);
+    if (String(input).trim() === "" || !Number.isInteger(Number(String(input).trim()))) {
       alert("목표 수치는 정수로 입력하세요.");
-      return;
-    }
-    if (target < 0 || target > 20) {
-      alert("목표 수치는 0~20 범위로 입력하세요.");
       return;
     }
     if (target <= currentLv) {
@@ -220,6 +231,35 @@
     render();
   }
 
+  function clearAllStateExceptLv(nextLv) {
+    totalStones = 0;
+
+    Object.keys(failCount).forEach(k => delete failCount[k]);
+    Object.keys(failBonus).forEach(k => delete failBonus[k]);
+    Object.keys(attempts).forEach(k => delete attempts[k]);
+
+    totalAttempts = 0;
+    totalSuccess = 0;
+    totalFail = 0;
+
+    $log.textContent = "준비 완료";
+    currentLv = nextLv;
+  }
+
+  function applyStartLv() {
+    if (autoTimerId !== null) return;
+
+    const vRaw = Number(String($startLv.value).trim());
+    const v = clampInt(vRaw, 0, 20);
+
+    // input 값을 정규화(예: 999 입력해도 20으로)
+    $startLv.value = String(v);
+
+    clearAllStateExceptLv(v);
+    log(`시작 LV 적용: ${v}`);
+    render();
+  }
+
   function resetAll() {
     if (autoTimerId !== null) {
       clearInterval(autoTimerId);
@@ -227,16 +267,8 @@
       autoTargetLv = null;
     }
 
-    currentLv = 0;
-    totalStones = 0;
-
-    Object.keys(failCount).forEach((k) => delete failCount[k]);
-    Object.keys(failBonus).forEach((k) => delete failBonus[k]);
-    Object.keys(attempts).forEach((k) => delete attempts[k]);
-
-    totalAttempts = 0;
-    totalSuccess = 0;
-    totalFail = 0;
+    $startLv.value = "0";
+    clearAllStateExceptLv(0);
 
     $log.textContent = "리셋 완료";
     render();
@@ -245,6 +277,12 @@
   $btn.addEventListener("click", enhanceOnce);
   $auto.addEventListener("click", startOrStopAutoEnhance);
   $reset.addEventListener("click", resetAll);
+  $applyStart.addEventListener("click", applyStartLv);
+
+  // Enter로도 적용
+  $startLv.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") applyStartLv();
+  });
 
   render();
 })();

@@ -71,6 +71,15 @@ button:disabled {
   margin-top: 6px;
 }
 
+/* 시작 LV 입력 + 적용 버튼 */
+.startLvWrap{
+  display: flex;
+  gap: 10px;
+}
+#applyStartLvBtn{
+  flex: 0 0 110px;
+}
+
 /* 표 형태 레이아웃 (데스크탑) */
 .gridTable {
   margin-top: 14px;
