@@ -58,7 +58,6 @@
   // 도움말 패널 토글
   const $helpBtn = document.getElementById("helpBtn");
   const $helpPanel = document.getElementById("helpPanel");
-  const $helpCloseBtn = document.getElementById("helpCloseBtn");
 
   // 콤보 초기화
   units.forEach(u => {
@@ -276,6 +275,7 @@
   }
 
   function resetAll() {
+    console.log("ddddd");
     if (autoTimerId !== null) {
       clearInterval(autoTimerId);
       autoTimerId = null;
@@ -396,10 +396,6 @@
   $startFail.addEventListener("keydown", (e) => { if (e.key === "Enter") applyStartLv(); });
   $helpBtn.addEventListener("click", () => {
     $helpPanel.classList.toggle("open");
-  });
-
-  $helpCloseBtn.addEventListener("click", () => {
-    $helpPanel.classList.remove("open");
   });
 
   render();
