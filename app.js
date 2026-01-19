@@ -88,6 +88,11 @@
     log(text, cls);
   }
 
+  function clearLog() {
+    $log.textContent = "";
+    $attemptList.textContent = "";
+  }
+
   function renderAttempts() {
     const lines = [];
     for (let from = 0; from <= 19; from++) {
@@ -337,7 +342,7 @@
       return;
     }
 
-    const t2 = prompt("반복 횟수를 입력하세요 (1~100)");
+    const t2 = prompt("반복 횟수를 입력하세요 (1~1000)");
     if (t2 === null) return;
 
     const t2s = String(t2).trim();
@@ -345,7 +350,7 @@
       alert("반복 횟수는 정수로 입력하세요.");
       return;
     }
-    const loops = clampInt(Number(t2s), 1, 100);
+    const loops = clampInt(Number(t2s), 1, 1000);
 
     // 현재 “실제 상태”를 시작점으로 복제해서 시뮬 시작
     const initFailCount = { ...failCount };
@@ -368,9 +373,9 @@
     const avgTries = sumTries / loops;
 
     // 로그는 최종 결과 한 줄만 남김
-    setLogOnly(
-      `시뮬레이션 결과: 현재LV ${currentLv} → 목표LV ${targetLv}, ${loops}회 평균 해방석 ${avgStones.toFixed(1)} (평균 시도 ${avgTries.toFixed(1)})`
-    );
+    clearLog();
+    log(`사용된 해방석 평균 : ${avgStones.toFixed(1)}개 (평균 시도 ${avgTries.toFixed(1)}회)`);
+    log(`LV${currentLv}에서 목표LV${targetLv}까지 ${loops}회 시뮬레이션 결과:`, "success");
 
     // UI 상태(현재LV/누적재화/통계)는 그대로 두고, 로그만 결과로 정리
     // 필요하면 여기서 통계 영역도 "시뮬 통계"로 바꾸는 옵션도 가능
