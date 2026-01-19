@@ -1,133 +1,260 @@
-html, body { height: 100%; margin: 0; }
-* { box-sizing: border-box; }
+/* =========================
+   Dark / Minimal (GitHub-dimmed vibe)
+   ========================= */
+:root{
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel2: #0f141b;
+  --border: rgba(240,246,252,0.12);
+  --border2: rgba(240,246,252,0.18);
+
+  --text: rgba(240,246,252,0.92);
+  --muted: rgba(240,246,252,0.65);
+  --muted2: rgba(240,246,252,0.45);
+
+  --accent: #2f81f7;   /* GitHub-ish blue */
+  --good: #3fb950;     /* GitHub green */
+  --bad: #f85149;      /* GitHub red */
+
+  --radius: 14px;
+  --radius2: 12px;
+
+  --shadow: 0 18px 40px rgba(0,0,0,0.55);
+}
+
+*{ box-sizing: border-box; }
+html, body{ height:100%; margin:0; }
 
 body{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+
   display:flex;
   justify-content:center;
   align-items:center;
-  font-family: system-ui, sans-serif;
-  background:#f5f5f5;
-  padding:16px;
+  padding: 18px;
 }
 
+/* 메인 카드 */
 .wrap{
-  width:100%;
-  max-width:760px;
-  padding:20px;
-  border:1px solid #ddd;
-  border-radius:14px;
-  background:#fff;
+  width: 100%;
+  max-width: 840px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 38%), var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
 }
 
+/* 공통 입력 row */
 .row{
   display:grid;
-  grid-template-columns:160px 1fr;
-  gap:12px;
+  grid-template-columns: 170px 1fr;
+  gap: 12px;
   align-items:center;
-  margin-bottom:12px;
+  margin-bottom: 12px;
 }
 
-label{ font-weight:700; }
+label{
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: .2px;
+}
 
 select, input{
   width:100%;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:10px;
+  padding: 10px 12px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
+select:focus, input:focus{
+  border-color: rgba(47,129,247,0.65);
+  box-shadow: 0 0 0 3px rgba(47,129,247,0.15);
+}
+
+input[readonly]{
+  opacity: .92;
+}
+
+/* 버튼 라인 */
 .btn-row{
   display:flex;
-  gap:10px;
-  margin:10px 0 14px;
+  gap: 10px;
+  margin: 10px 0 16px;
   flex-wrap: wrap;
 }
 
 button{
   flex: 1 1 140px;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  font-weight:800;
-  cursor:pointer;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  background: rgba(240,246,252,0.04);
+  color: var(--text);
+  font-weight: 900;
+  letter-spacing: .2px;
+  cursor: pointer;
+
+  transition: transform .06s ease, border-color .15s ease, background .15s ease, opacity .15s ease;
 }
 
-button:disabled{ opacity:0.4; cursor:not-allowed; }
+button:hover{
+  border-color: rgba(47,129,247,0.45);
+  background: rgba(47,129,247,0.08);
+  transform: translateY(-1px);
+}
+button:active{ transform: translateY(0); }
+button:disabled{
+  opacity: .45;
+  cursor:not-allowed;
+  transform: none;
+}
 
-.success{ color:green; font-weight:bold; }
-.fail{ color:red; font-weight:bold; }
+/* 성공/실패 (요구대로 굵게 + 컬러) */
+.success{ color: var(--good); font-weight: 900; }
+.fail{ color: var(--bad); font-weight: 900; }
 
-.info{ font-size:13px; color:#555; margin-top:6px; }
+/* 확률 안내 줄 */
+.info{
+  margin-top: 6px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(240,246,252,0.03);
+  color: var(--muted);
+  font-size: 13px;
+}
 
-/* 시작 LV 입력 + 적용 */
-.startLvWrap{ display:flex; gap:10px; }
-#startFailField{ flex: 0 0 140px; }
-#applyStartLvBtn{ flex: 0 0 110px; }
+/* =========================
+   시작 LV / 실패횟수 / 적용  (깨짐 방지 핵심)
+   ========================= */
+.startLvWrap{
+  display: grid;
+  grid-template-columns: 1fr 1fr 110px;
+  gap: 10px;
+  align-items: center;
+}
 
-/* 표 */
+#applyStartLvBtn{
+  width: 110px;
+  justify-self: end;
+}
+
+/* =========================
+   로그/시도횟수 테이블
+   ========================= */
 .gridTable{
-  margin-top:14px;
+  margin-top: 12px;
   display:grid;
-  grid-template-columns: 1fr 280px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  overflow:hidden;
-  width:100%;
+  grid-template-columns: 1fr 320px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(240,246,252,0.02);
 }
 
 .th{
-  padding:10px 12px;
-  background:#f0f0f0;
-  border-bottom:1px solid #ccc;
+  padding: 12px 12px;
+  background: rgba(240,246,252,0.03);
+  border-bottom: 1px solid var(--border);
+
   display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:10px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.th-left{ border-right:1px solid #ccc; }
-.thTitle{ font-weight:900; }
-.thSummary{ font-size:12px; color:#444; white-space:nowrap; }
+.th-left{ border-right: 1px solid var(--border); }
 
-.td{ padding:12px; background:#fff; }
-.gridTable .td:nth-child(3){ border-right:1px solid #ccc; }
+.thTitle{
+  font-weight: 950;
+  letter-spacing: .2px;
+}
 
-/* 높이 제한 */
+.thSummary{
+  font-size: 12px;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+
+.td{
+  padding: 12px;
+  background: transparent;
+}
+
+.gridTable .td:nth-child(3){
+  border-right: 1px solid var(--border);
+}
+
+/* max-height 180px 유지 */
+.log, .attempts-list{
+  min-height: 180px;
+  max-height: 180px;
+  overflow: auto;
+
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 12px;
+}
+
 .log{
-  padding:12px;
-  border:1px dashed #aaa;
-  border-radius:10px;
-  min-height:180px;
-  max-height:180px;
-  overflow:auto;
-  background:#fff;
+  background: rgba(13,17,23,0.55);
+  color: var(--text);
 }
 
 .attempts-list{
-  padding:12px;
-  border:1px dashed #aaa;
-  border-radius:10px;
-  min-height:180px;
-  max-height:180px;
-  overflow:auto;
-  background:#fafafa;
-  font-size:13px;
-  color:#333;
-  line-height:1.6;
-  white-space:pre-wrap;
+  background: rgba(13,17,23,0.35);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
-/* 모바일 */
+/* 스크롤바(Chromium) */
+.log::-webkit-scrollbar,
+.attempts-list::-webkit-scrollbar{ width: 10px; }
+.log::-webkit-scrollbar-thumb,
+.attempts-list::-webkit-scrollbar-thumb{
+  background: rgba(240,246,252,0.16);
+  border-radius: 999px;
+}
+.log::-webkit-scrollbar-track,
+.attempts-list::-webkit-scrollbar-track{
+  background: rgba(240,246,252,0.03);
+}
+
+/* =========================
+   Responsive
+   ========================= */
 @media (max-width: 720px){
   body{ align-items:flex-start; }
-  .wrap{ padding:16px; }
-  .row{ grid-template-columns:1fr; }
-  .gridTable{ grid-template-columns:1fr; }
-  .th-left{ border-right:none; }
-  .gridTable .td:nth-child(3){
-    border-right:none;
-    border-bottom:1px solid #eee;
+
+  .wrap{ padding: 14px; }
+
+  .row{ grid-template-columns: 1fr; }
+
+  /* 시작 LV 줄: 좁으면 2줄로 */
+  .startLvWrap{
+    grid-template-columns: 1fr 1fr;
   }
-  .thSummary{ white-space:normal; text-align:right; }
-  #applyStartLvBtn{ flex: 0 0 100px; }
+  #applyStartLvBtn{
+    width: 100%;
+    justify-self: stretch;
+    grid-column: 1 / -1;
+  }
+
+  .gridTable{ grid-template-columns: 1fr; }
+  .th-left{ border-right: none; }
+  .gridTable .td:nth-child(3){
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .thSummary{ white-space: normal; text-align: right; }
 }
