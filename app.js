@@ -2,15 +2,26 @@
   const units = ["검귀","고블린","빙결기사","고대청룡","우주병사","코인맨","마스터캣","오멘"];
 
   const rules = {
-    0:{baseChance:100,cost:300}, 1:{baseChance:50,cost:30}, 2:{baseChance:40,cost:30},
-    3:{baseChance:30,cost:30}, 4:{baseChance:20,cost:30}, 5:{baseChance:15,cost:30},
-    6:{baseChance:15,cost:30}, 7:{baseChance:10,cost:30}, 8:{baseChance:5,cost:30},
-    9:{baseChance:5,cost:30}, 10:{baseChance:100,cost:500},
-    11:{baseChance:40,cost:50}, 12:{baseChance:30,cost:50},
-    13:{baseChance:20,cost:50}, 14:{baseChance:15,cost:50},
-    15:{baseChance:15,cost:50}, 16:{baseChance:10,cost:50},
-    17:{baseChance:10,cost:50}, 18:{baseChance:5,cost:50},
-    19:{baseChance:5,cost:50}
+    0: { baseChance: 100, cost: 300 },
+    1: { baseChance: 50, cost: 30 },
+    2: { baseChance: 40, cost: 30 },
+    3: { baseChance: 30, cost: 30 },
+    4: { baseChance: 20, cost: 30 },
+    5: { baseChance: 15, cost: 30 },
+    6: { baseChance: 15, cost: 30 },
+    7: { baseChance: 10, cost: 30 },
+    8: { baseChance: 5, cost: 30 },
+    9: { baseChance: 5, cost: 30 },
+    10: { baseChance: 100, cost: 500 },
+    11: { baseChance: 40, cost: 50 },
+    12: { baseChance: 30, cost: 50 },
+    13: { baseChance: 20, cost: 50 },
+    14: { baseChance: 15, cost: 50 },
+    15: { baseChance: 15, cost: 50 },
+    16: { baseChance: 10, cost: 50 },
+    17: { baseChance: 10, cost: 50 },
+    18: { baseChance: 5, cost: 50 },
+    19: { baseChance: 5, cost: 50 },
   };
 
   let currentLv = 0;
@@ -49,7 +60,7 @@
   const $sumFail = document.getElementById("sumFail");
 
   // 콤보 초기화
-  units.forEach(u => {
+  units.forEach((u) => {
     const o = document.createElement("option");
     o.textContent = u;
     $unit.appendChild(o);
@@ -121,8 +132,7 @@
     const chance = getChance(currentLv);
 
     $chance.value = chance + "%";
-    $info.textContent =
-      `${currentLv} → ${currentLv + 1} | 기본 ${r.baseChance}% + 보정 ${getBonus(currentLv)}% = ${chance}% | 소모 ${r.cost}`;
+    $info.textContent = `${currentLv} → ${currentLv + 1} | 기본 ${r.baseChance}% + 보정 ${getBonus(currentLv)}% = ${chance}% | 소모 ${r.cost}`;
 
     // 자동강화 중: 수동강화 막고, 자동 버튼은 "중지"
     if (autoTimerId !== null) {
@@ -220,9 +230,9 @@
     currentLv = 0;
     totalStones = 0;
 
-    Object.keys(failCount).forEach(k => delete failCount[k]);
-    Object.keys(failBonus).forEach(k => delete failBonus[k]);
-    Object.keys(attempts).forEach(k => delete attempts[k]);
+    Object.keys(failCount).forEach((k) => delete failCount[k]);
+    Object.keys(failBonus).forEach((k) => delete failBonus[k]);
+    Object.keys(attempts).forEach((k) => delete attempts[k]);
 
     totalAttempts = 0;
     totalSuccess = 0;
