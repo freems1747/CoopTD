@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>강화 테스트</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="row">
+      <label>초마신</label>
+      <select id="unitSelect"></select>
+    </div>
+
+    <div class="row">
+      <label>현재 LV</label>
+      <input id="lvField" readonly value="0">
+    </div>
+
+    <div class="btn-row">
+      <button id="enhanceBtn">강화</button>
+      <button id="autoEnhanceBtn" type="button">자동강화</button>
+      <button id="resetBtn" type="button">리셋</button>
+    </div>
+
+    <div class="row">
+      <label>누적 해방석 소모량</label>
+      <input id="stoneField" readonly value="0">
+    </div>
+
+    <div class="row">
+      <label>현재 강화 확률</label>
+      <input id="chanceField" readonly value="0%">
+    </div>
+
+    <div class="row">
+      <label>현재 실패 횟수</label>
+      <input id="failField" readonly value="0">
+    </div>
+
+    <div class="info" id="chanceInfo"></div>
+
+    <!-- 표 형태: 강화로그 | 구간별 시도횟수 -->
+    <div class="gridTable">
+      <div class="th th-left">
+        <div class="thTitle">강화로그</div>
+        <div class="thSummary">
+          총 시도 <span id="sumAttempts">0</span>회 ·
+          성공 <span id="sumSuccess">0</span>회 ·
+          실패 <span id="sumFail">0</span>회
+        </div>
+      </div>
+      <div class="th th-right">
+        <div class="thTitle">구간별 시도횟수</div>
+        <div class="thSummary">&nbsp;</div>
+      </div>
+
+      <div class="td">
+        <div class="log" id="logBox">준비 완료</div>
+      </div>
+      <div class="td">
+        <div class="attempts-list" id="attemptList">아직 시도 없음</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
