@@ -55,6 +55,11 @@
   const $sumSuccess = document.getElementById("sumSuccess");
   const $sumFail = document.getElementById("sumFail");
 
+  // 도움말 패널 토글
+  const $helpBtn = document.getElementById("helpBtn");
+  const $helpPanel = document.getElementById("helpPanel");
+  const $helpCloseBtn = document.getElementById("helpCloseBtn");
+
   // 콤보 초기화
   units.forEach(u => {
     const o = document.createElement("option");
@@ -380,7 +385,6 @@
     // UI 상태(현재LV/누적재화/통계)는 그대로 두고, 로그만 결과로 정리
     // 필요하면 여기서 통계 영역도 "시뮬 통계"로 바꾸는 옵션도 가능
   }
-
   // 이벤트
   $btn.addEventListener("click", enhanceOnce);
   $auto.addEventListener("click", startOrStopAutoEnhance);
@@ -390,6 +394,13 @@
 
   $startLv.addEventListener("keydown", (e) => { if (e.key === "Enter") applyStartLv(); });
   $startFail.addEventListener("keydown", (e) => { if (e.key === "Enter") applyStartLv(); });
+  $helpBtn.addEventListener("click", () => {
+    $helpPanel.classList.toggle("open");
+  });
+
+  $helpCloseBtn.addEventListener("click", () => {
+    $helpPanel.classList.remove("open");
+  });
 
   render();
 })();

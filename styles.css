@@ -258,3 +258,137 @@ button:disabled{
   }
   .thSummary{ white-space: normal; text-align: right; }
 }
+
+/* =========================
+   Help / README Panel
+   ========================= */
+
+/* ? 버튼 (FAB) */
+#helpBtn{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 900;
+
+  background: rgba(240,246,252,0.08);
+  color: var(--text);
+  border: 1px solid var(--border);
+
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#helpBtn:hover{
+  background: rgba(47,129,247,0.18);
+  border-color: rgba(47,129,247,0.5);
+}
+
+/* 패널 */
+.help-panel{
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  width: 360px;
+  max-height: 70vh;
+
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+
+  display: flex;
+  flex-direction: column;
+
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 999;
+}
+
+.help-panel.open{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 헤더 */
+.help-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 900;
+}
+
+#helpCloseBtn{
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#helpCloseBtn:hover{
+  color: var(--text);
+}
+
+/* 내용 */
+.help-content{
+  padding: 14px;
+  overflow: auto;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.help-content h3,
+.help-content h4{
+  color: var(--text);
+  margin-top: 0;
+}
+
+.help-content ul{
+  padding-left: 18px;
+}
+
+/* 모바일 */
+@media (max-width: 520px){
+  .help-panel{
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+
+
+/* =========================
+   Footer / Copyright
+   ========================= */
+.footer{
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+
+  font-size: 12px;
+  color: var(--muted2);
+  opacity: 0.8;
+  pointer-events: none; /* 클릭 방해 안 하게 */
+  text-align: center;
+  z-index: 500;
+}
+
+/* 모바일에서 살짝 위로 */
+@media (max-width: 520px){
+  .footer{
+    bottom: 6px;
+    font-size: 11px;
+  }
+}
