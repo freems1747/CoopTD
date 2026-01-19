@@ -2,26 +2,15 @@
   const units = ["검귀","고블린","빙결기사","고대청룡","우주병사","코인맨","마스터캣","오멘"];
 
   const rules = {
-    0: { baseChance: 100, cost: 300 },
-    1: { baseChance: 50, cost: 30 },
-    2: { baseChance: 40, cost: 30 },
-    3: { baseChance: 30, cost: 30 },
-    4: { baseChance: 20, cost: 30 },
-    5: { baseChance: 15, cost: 30 },
-    6: { baseChance: 15, cost: 30 },
-    7: { baseChance: 10, cost: 30 },
-    8: { baseChance: 5, cost: 30 },
-    9: { baseChance: 5, cost: 30 },
-    10: { baseChance: 100, cost: 500 },
-    11: { baseChance: 40, cost: 50 },
-    12: { baseChance: 30, cost: 50 },
-    13: { baseChance: 20, cost: 50 },
-    14: { baseChance: 15, cost: 50 },
-    15: { baseChance: 15, cost: 50 },
-    16: { baseChance: 10, cost: 50 },
-    17: { baseChance: 10, cost: 50 },
-    18: { baseChance: 5, cost: 50 },
-    19: { baseChance: 5, cost: 50 },
+    0:{baseChance:100,cost:300}, 1:{baseChance:50,cost:30}, 2:{baseChance:40,cost:30},
+    3:{baseChance:30,cost:30}, 4:{baseChance:20,cost:30}, 5:{baseChance:15,cost:30},
+    6:{baseChance:15,cost:30}, 7:{baseChance:10,cost:30}, 8:{baseChance:5,cost:30},
+    9:{baseChance:5,cost:30}, 10:{baseChance:100,cost:500},
+    11:{baseChance:40,cost:50}, 12:{baseChance:30,cost:50},
+    13:{baseChance:20,cost:50}, 14:{baseChance:15,cost:50},
+    15:{baseChance:15,cost:50}, 16:{baseChance:10,cost:50},
+    17:{baseChance:10,cost:50}, 18:{baseChance:5,cost:50},
+    19:{baseChance:5,cost:50}
   };
 
   let currentLv = 0;
@@ -55,6 +44,7 @@
 
   const $btn = document.getElementById("enhanceBtn");
   const $auto = document.getElementById("autoEnhanceBtn");
+  const $sim = document.getElementById("simBtn");
   const $reset = document.getElementById("resetBtn");
 
   const $log = document.getElementById("logBox");
@@ -78,13 +68,8 @@
     return Math.min(max, Math.max(min, n));
   }
 
-  function getFailCount(lv) {
-    return failCount[lv] || 0;
-  }
-
-  function getBonus(lv) {
-    return Math.min(5, failBonus[lv] || 0);
-  }
+  function getFailCount(lv) { return failCount[lv] || 0; }
+  function getBonus(lv) { return Math.min(5, failBonus[lv] || 0); }
 
   function getChance(lv) {
     if (lv >= 20) return 0;
@@ -96,6 +81,11 @@
     div.textContent = text;
     div.className = cls || "";
     $log.prepend(div);
+  }
+
+  function setLogOnly(text, cls) {
+    $log.textContent = "";
+    log(text, cls);
   }
 
   function renderAttempts() {
@@ -131,9 +121,12 @@
     renderAttempts();
     renderSummary();
 
-    // 자동강화 중이면 시작LV 적용 막기
-    $startLv.disabled = (autoTimerId !== null);
-    $applyStart.disabled = (autoTimerId !== null);
+    // 자동강화 중이면 시작/시뮬 관련 조작 막기
+    const locked = (autoTimerId !== null);
+    $startLv.disabled = locked;
+    $startFail.disabled = locked;
+    $applyStart.disabled = locked;
+    $sim.disabled = locked;
 
     if (currentLv >= 20) {
       $chance.value = "MAX";
@@ -152,7 +145,6 @@
     $info.textContent =
       `${currentLv} → ${currentLv + 1} | 기본 ${r.baseChance}% + 보정 ${getBonus(currentLv)}% = ${chance}% | 소모 ${r.cost}`;
 
-    // 자동강화 중: 수동강화 막고, 자동 버튼은 "중지"
     if (autoTimerId !== null) {
       $btn.disabled = true;
       $auto.disabled = false;
@@ -204,11 +196,12 @@
     const input = prompt(`목표 강화 수치를 입력하세요 (현재 ${currentLv}, 0~20)`);
     if (input === null) return;
 
-    const target = clampInt(Number(String(input).trim()), 0, 20);
-    if (String(input).trim() === "" || !Number.isInteger(Number(String(input).trim()))) {
+    const trimmed = String(input).trim();
+    if (trimmed === "" || !Number.isInteger(Number(trimmed))) {
       alert("목표 수치는 정수로 입력하세요.");
       return;
     }
+    const target = clampInt(Number(trimmed), 0, 20);
     if (target <= currentLv) {
       alert("목표 수치는 현재 레벨보다 커야 합니다.");
       return;
@@ -243,26 +236,26 @@
     totalSuccess = 0;
     totalFail = 0;
 
+    $attemptList.textContent = "아직 시도 없음";
     $log.textContent = "준비 완료";
+
     currentLv = nextLv;
   }
 
   function applyStartLv() {
     if (autoTimerId !== null) return;
 
-    const vRaw = Number(String($startLv.value).trim());
-    const v = clampInt(vRaw, 0, 20);
-    $startLv.value = String(v);
+    const lvTrim = String($startLv.value).trim();
+    const failTrim = String($startFail.value).trim();
 
-    const fRaw = Number(String($startFail.value).trim());
-    const f = Number.isFinite(fRaw) ? Math.max(0, Math.trunc(fRaw)) : 0;
+    const v = clampInt(Number(lvTrim), 0, 20);
+    const f = Number.isFinite(Number(failTrim)) ? Math.max(0, Math.trunc(Number(failTrim))) : 0;
+
+    $startLv.value = String(v);
     $startFail.value = String(f);
 
-    // 상태 초기화 후, 현재 LV만 시작값으로 세팅
     clearAllStateExceptLv(v);
 
-    // ✅ 핵심: "현재 레벨(v)"에 대한 실패누적/보정 적용
-    // 실패횟수는 무한 누적로 저장, 보정은 최대 +5까지만 반영
     if (v < 20) {
       failCount[v] = f;
       failBonus[v] = Math.min(5, f);
@@ -280,21 +273,118 @@
     }
 
     $startLv.value = "0";
-    clearAllStateExceptLv(0);
+    $startFail.value = "0";
 
+    clearAllStateExceptLv(0);
     $log.textContent = "리셋 완료";
     render();
   }
 
+  // ---- 시뮬레이션 (핵심) ----
+  function simulateOnce(fromLv, toLv, initFailCount, initFailBonus) {
+    // 로컬 시뮬레이션 상태(실제 UI 상태를 건드리지 않음)
+    let lv = fromLv;
+    let stones = 0;
+
+    const sFailCount = { ...initFailCount };
+    const sFailBonus = { ...initFailBonus };
+
+    let tries = 0;
+    let succ = 0;
+    let fail = 0;
+
+    while (lv < toLv && lv < 20) {
+      // 현재 구간 1회 시도
+      tries++;
+
+      const base = rules[lv].baseChance;
+      const bonus = Math.min(5, sFailBonus[lv] || 0);
+      const chance = Math.min(100, base + bonus);
+
+      stones += rules[lv].cost;
+
+      const roll = Math.random() * 100;
+      if (roll < chance) {
+        succ++;
+        // 성공 시 해당 구간 보정 초기화 후 레벨업
+        sFailCount[lv] = 0;
+        sFailBonus[lv] = 0;
+        lv++;
+      } else {
+        fail++;
+        sFailCount[lv] = (sFailCount[lv] || 0) + 1;
+        sFailBonus[lv] = Math.min(5, (sFailBonus[lv] || 0) + 1);
+      }
+    }
+
+    return { stones, tries, succ, fail, reachedLv: lv };
+  }
+
+  function runSimulation() {
+    if (autoTimerId !== null) return;
+
+    const t1 = prompt(`목표 레벨을 입력하세요 (현재 ${currentLv}, 0~20)`);
+    if (t1 === null) return;
+
+    const t1s = String(t1).trim();
+    if (t1s === "" || !Number.isInteger(Number(t1s))) {
+      alert("목표 레벨은 정수로 입력하세요.");
+      return;
+    }
+    const targetLv = clampInt(Number(t1s), 0, 20);
+    if (targetLv <= currentLv) {
+      alert("목표 레벨은 현재 레벨보다 커야 합니다.");
+      return;
+    }
+
+    const t2 = prompt("반복 횟수를 입력하세요 (1~100)");
+    if (t2 === null) return;
+
+    const t2s = String(t2).trim();
+    if (t2s === "" || !Number.isInteger(Number(t2s))) {
+      alert("반복 횟수는 정수로 입력하세요.");
+      return;
+    }
+    const loops = clampInt(Number(t2s), 1, 100);
+
+    // 현재 “실제 상태”를 시작점으로 복제해서 시뮬 시작
+    const initFailCount = { ...failCount };
+    const initFailBonus = { ...failBonus };
+
+    let sumStones = 0;
+    let sumTries = 0;
+    let sumSucc = 0;
+    let sumFail = 0;
+
+    for (let i = 0; i < loops; i++) {
+      const r = simulateOnce(currentLv, targetLv, initFailCount, initFailBonus);
+      sumStones += r.stones;
+      sumTries += r.tries;
+      sumSucc += r.succ;
+      sumFail += r.fail;
+    }
+
+    const avgStones = sumStones / loops;
+    const avgTries = sumTries / loops;
+
+    // 로그는 최종 결과 한 줄만 남김
+    setLogOnly(
+      `시뮬레이션 결과: 현재LV ${currentLv} → 목표LV ${targetLv}, ${loops}회 평균 해방석 ${avgStones.toFixed(1)} (평균 시도 ${avgTries.toFixed(1)})`
+    );
+
+    // UI 상태(현재LV/누적재화/통계)는 그대로 두고, 로그만 결과로 정리
+    // 필요하면 여기서 통계 영역도 "시뮬 통계"로 바꾸는 옵션도 가능
+  }
+
+  // 이벤트
   $btn.addEventListener("click", enhanceOnce);
   $auto.addEventListener("click", startOrStopAutoEnhance);
+  $sim.addEventListener("click", runSimulation);
   $reset.addEventListener("click", resetAll);
   $applyStart.addEventListener("click", applyStartLv);
 
-  // Enter로도 적용
-  $startLv.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") applyStartLv();
-  });
+  $startLv.addEventListener("keydown", (e) => { if (e.key === "Enter") applyStartLv(); });
+  $startFail.addEventListener("keydown", (e) => { if (e.key === "Enter") applyStartLv(); });
 
   render();
 })();
