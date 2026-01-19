@@ -220,7 +220,7 @@
         return;
       }
       enhanceOnce();
-    }, 500);
+    }, 10);
 
     render();
   }
