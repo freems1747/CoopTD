@@ -347,10 +347,10 @@
       return;
     }
 
-    const t2 = prompt("반복 횟수를 입력하세요 (1~1000)");
+    const t2 = prompt("반복 횟수를 입력하세요 (1~30000)");
     if (t2 === null) return;
 
-    const loops = clampInt(Number(t2), 1, 1000);
+    const loops = clampInt(Number(t2), 1, 30000);
     if (!Number.isInteger(Number(t2))) {
       alert("반복 횟수는 정수로 입력하세요.");
       return;
